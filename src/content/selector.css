@@ -1,0 +1,66 @@
+/*
+ * Styles confinés au shadow root de l'overlay.
+ *
+ * Le reset `*` en tête neutralise tout style hérité de la page. Rien ne sort
+ * d'ici, rien n'entre : l'extension ne peut pas perturber la page, et la page
+ * ne peut pas casser la sélection.
+ *
+ * Aucune transition ni animation (spec §9 : « sans animation inutile »).
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Assombrissement de la page, visible avant même le premier clic (§2). */
+.dim {
+  position: fixed;
+  inset: 0;
+  background: rgb(0 0 0 / 38%);
+}
+
+/*
+ * La sélection est evidée dans l'assombrissement par un spread d'ombre :
+ * l'ombre extérieure ne peint pas l'intérieur de la boîte, ce qui laisse la
+ * zone choisie totalement claire sans avoir à découper l'assombrissement en
+ * quatre bandes.
+ */
+.frame {
+  position: fixed;
+  display: none;
+  border: 1px solid #38bdf8;
+  box-shadow: 0 0 0 100vmax rgb(0 0 0 / 38%);
+  pointer-events: none;
+}
+
+.root.is-selecting .dim {
+  display: none;
+}
+
+.root.is-selecting .frame {
+  display: block;
+}
+
+.frame__size {
+  position: absolute;
+  top: -1.55rem;
+  left: -1px;
+  padding: 0.2rem 0.35rem;
+  border-radius: 3px;
+  background: #38bdf8;
+  color: #04121c;
+  font: 600 11px/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Sélection trop haute pour la bande d'étiquette : on la passe en dessous. */
+.frame.is-flipped .frame__size {
+  top: auto;
+  bottom: -1.55rem;
+}
